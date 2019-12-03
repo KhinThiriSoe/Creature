@@ -37,13 +37,14 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.raywenderlich.android.creatures.R
+import com.raywenderlich.android.creatures.model.Creature
 import com.raywenderlich.android.creatures.model.CreatureStore
 import kotlinx.android.synthetic.main.fragment_all.*
 
 
 class AllFragment : Fragment() {
 
-    private val adapter = CreatureAdapter(CreatureStore.getCratures())
+    private val adapter = CreatureAdapter(CreatureStore.getCreatures() as MutableList<Creature>)
 
     companion object {
         fun newInstance(): AllFragment {

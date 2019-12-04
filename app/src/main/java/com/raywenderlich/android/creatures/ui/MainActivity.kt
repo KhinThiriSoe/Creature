@@ -31,10 +31,10 @@
 package com.raywenderlich.android.creatures.ui
 
 import android.os.Bundle
-import com.google.android.material.bottomnavigation.BottomNavigationView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentPagerAdapter
-import androidx.appcompat.app.AppCompatActivity
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.raywenderlich.android.creatures.R
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -70,12 +70,12 @@ class MainActivity : AppCompatActivity() {
 
   private fun setupViewPager() {
     viewPager.adapter = object : FragmentPagerAdapter(supportFragmentManager) {
-      override fun getItem(position: Int): Fragment? {
+      override fun getItem(position: Int): Fragment {
         when (position) {
           0 -> return AllFragment.newInstance()
           1 -> return FavoritesFragment.newInstance()
         }
-        return null
+        return AllFragment.newInstance()
       }
 
       override fun getCount() = 2

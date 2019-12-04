@@ -34,6 +34,7 @@ import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.raywenderlich.android.creatures.R
 import com.raywenderlich.android.creatures.model.Creature
@@ -44,8 +45,12 @@ import kotlinx.android.synthetic.main.fragment_all.*
 class AllFragment : Fragment() {
 
     private val adapter = CreatureCardAdapter(CreatureStore.getCreatures() as MutableList<Creature>)
-
     private lateinit var layoutManager: StaggeredGridLayoutManager
+    private lateinit var listItemDecoration: RecyclerView.ItemDecoration
+    private lateinit var gridItemDecoration: RecyclerView.ItemDecoration
+    private lateinit var listMenuItem: MenuItem
+    private lateinit var gridMenuItem: MenuItem
+    private var gridState = GridState.GRID
 
     companion object {
         fun newInstance(): AllFragment {
@@ -72,6 +77,14 @@ class AllFragment : Fragment() {
         this.layoutManager = StaggeredGridLayoutManager(2, GridLayoutManager.VERTICAL)
         creatureRecyclerView.layoutManager = layoutManager
         creatureRecyclerView.adapter = adapter
+
+        val spacingInPixels =
+            resources.getDimensionPixelSize(R.dimen.creature_card_grid_layout_margin)
+
+        listItemDecoration = SpacingItemDecoration(1, spacingInPixels)
+        gridItemDecoration = SpacingItemDecoration(2, spacingInPixels)
+
+        creatureRecyclerView.addItemDecoration(gridItemDecoration)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -79,14 +92,32 @@ class AllFragment : Fragment() {
         inflater.inflate(R.menu.menu_all, menu)
     }
 
+    override fun onPrepareOptionsMenu(menu: Menu) {
+        super.onPrepareOptionsMenu(menu)
+        listMenuItem = menu.findItem(R.id.action_span1)
+        gridMenuItem = menu.findItem(R.id.action_span2)
+        when(gridState) {
+            GridState.LIST -> {
+                listMenuItem.isEnabled = false
+                gridMenuItem.isEnabled = true
+            }
+            GridState.GRID -> {
+                listMenuItem.isEnabled = true
+                gridMenuItem.isEnabled = false
+            }
+        }
+    }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.action_span1 -> {
-                showListView()
+                gridState = GridState.LIST
+                updateRecyclerView(1, listItemDecoration, gridItemDecoration)
                 return true
             }
             R.id.action_span2 -> {
-                showGridView()
+                gridState = GridState.GRID
+                updateRecyclerView(2, gridItemDecoration, listItemDecoration)
                 return true
             }
         }
@@ -99,5 +130,17 @@ class AllFragment : Fragment() {
 
     private fun showGridView() {
         layoutManager.spanCount = 2
+    }
+
+    private fun updateRecyclerView(spanCount: Int,
+                                   addItemDecoration: RecyclerView.ItemDecoration,
+                                   removeItemDecoration: RecyclerView.ItemDecoration) {
+        layoutManager.spanCount = spanCount
+        creatureRecyclerView.removeItemDecoration(removeItemDecoration)
+        creatureRecyclerView.addItemDecoration(addItemDecoration)
+    }
+
+    private enum class GridState {
+        LIST, GRID
     }
 }

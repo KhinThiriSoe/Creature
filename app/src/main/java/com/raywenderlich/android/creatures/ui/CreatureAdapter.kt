@@ -49,6 +49,8 @@ class CreatureAdapter(private val creatures: MutableList<Creature>): RecyclerVie
             val intent = CreatureActivity.newIntent(context, creature.id)
             context.startActivity(intent)
         }
+
+
     }
 
 }
